@@ -4,6 +4,8 @@
 #include <iostream>
 #include <functional>
 #include <string>
+#include <vector>
+
 
 using namespace std;
 
@@ -98,6 +100,95 @@ public:
         instance = this;
         glutMainLoop();
     }
+    #include <vector>
+#include <GL/freeglut.h>
+
+class Primitive {
+protected:
+    std::vector<float> vertices; // Tablica wierzcho³ków (x, y, z)
+    std::vector<float> colors;   // Tablica kolorów (r, g, b)
+
+public:
+    Primitive() = default;
+
+    // Metoda do ustawiania wierzcho³ków
+    void setVertices(const std::vector<float>& vertexData) {
+        vertices = vertexData;
+    }
+
+    // Metoda do ustawiania kolorów
+    void setColors(const std::vector<float>& colorData) {
+        colors = colorData;
+    }
+
+    // Rysowanie prymitywu za pomoc¹ glDrawArrays
+    virtual void draw(GLenum mode) const {
+        if (vertices.empty() || colors.empty()) {
+            return; // Brak danych do rysowania
+        }
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        // Przypisz tablice wierzcho³ków i kolorów
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+
+        // Rysuj prymityw
+        glDrawArrays(mode, 0, vertices.size() / 3);
+
+        // Wy³¹cz tablice
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+};
+
+// Klasa dla punktu
+class Point : public Primitive 
+{
+public:
+    Point(float x, float y, float z, float r, float g, float b)
+    {
+        vertices = {x, y, z};
+        colors = {r, g, b};
+    }
+
+    void draw() const
+    {
+        Primitive::draw(GL_POINTS);
+    }
+};
+
+// Klasa dla linii
+class Line : public Primitive
+{
+public:
+    Line(const std::vector<float>& vertexData, const std::vector<float>& colorData)
+    {
+        setVertices(vertexData);
+        setColors(colorData);
+    }
+
+    void draw() const 
+    {
+        Primitive::draw(GL_LINES);
+    }
+};
+
+// Klasa dla trójk¹ta
+class Triangle : public Primitive {
+public:
+    Triangle(const std::vector<float>& vertexData, const std::vector<float>& colorData) {
+        setVertices(vertexData);
+        setColors(colorData);
+    }
+
+    void draw() const
+    {
+        Primitive::draw(GL_TRIANGLES);
+    }
+};
+
 
     ~Engine() {
         // Sprz¹tanie (FreeGLUT sam zwalnia pamiêæ)
@@ -137,11 +228,172 @@ private:
     }
 };
 
+#include <vector>
+#include <GL/freeglut.h>
+
+class Primitive {
+protected:
+    vector<float> vertices; // Tablica wierzcho³ków (x, y, z)
+    vector<float> colors;   // Tablica kolorów (r, g, b)
+
+public:
+    Primitive() = default;
+
+    // Metoda do ustawiania wierzcho³ków
+    void setVertices(const vector<float>& vertexData)
+    {
+        vertices = vertexData;
+    }
+
+    // Metoda do ustawiania kolorów
+    void setColors(const vector<float>& colorData)
+    {
+        colors = colorData;
+    }
+
+    // Rysowanie prymitywu za pomoc¹ glDrawArrays
+    virtual void draw(GLenum mode) const 
+    {
+        if (vertices.empty() || colors.empty()) 
+        {
+            return; // Brak danych do rysowania
+        }
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        // Przypisz tablice wierzcho³ków i kolorów
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+
+        // Rysuj prymityw
+        glDrawArrays(mode, 0, vertices.size() / 3);
+
+        // Wy³¹cz tablice
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+};
+
+// Klasa dla punktu
+class Point : public Primitive 
+{
+public:
+    Point(float x, float y, float z, float r, float g, float b) 
+    {
+        vertices = { x, y, z };
+        colors = { r, g, b };
+    }
+
+    void draw() const{
+        Primitive::draw(GL_POINTS);
+    }
+};
+
+// Klasa dla linii
+class Line : public Primitive 
+{
+public:
+    Line(const vector<float>& vertexData, const vector<float>& colorData)
+    {
+        setVertices(vertexData);
+        setColors(colorData);
+    }
+
+    void draw() const
+    {
+        Primitive::draw(GL_LINES);
+    }
+};
+
+// Klasa dla trójk¹ta
+class Triangle : public Primitive 
+{
+public:
+    Triangle(const vector<float>& vertexData, const std::vector<float>& colorData)
+    {
+        setVertices(vertexData);
+        setColors(colorData);
+    }
+
+    void draw() const 
+    {
+        Primitive::draw(GL_TRIANGLES);
+    }
+};
+
+// Klasa dla szeœcianu
+class Cube
+{
+private:
+    vector<float> vertices =
+    {
+        // Wierzcho³ki szeœcianu (8 wierzcho³ków)
+        -0.5f, -0.5f, -0.5f,  // 0: Lewy dolny ty³
+         0.5f, -0.5f, -0.5f,  // 1: Prawy dolny ty³
+         0.5f,  0.5f, -0.5f,  // 2: Prawy górny ty³
+        -0.5f,  0.5f, -0.5f,  // 3: Lewy górny ty³
+        -0.5f, -0.5f,  0.5f,  // 4: Lewy dolny przód
+         0.5f, -0.5f,  0.5f,  // 5: Prawy dolny przód
+         0.5f,  0.5f,  0.5f,  // 6: Prawy górny przód
+        -0.5f,  0.5f,  0.5f   // 7: Lewy górny przód
+    };
+
+    vector<unsigned int> indices = 
+    {
+        // Tylna œcianka
+        0, 1, 2,  2, 3, 0,
+        // Przednia œcianka
+        4, 5, 6,  6, 7, 4,
+        // Lewa œcianka
+        0, 4, 7,  7, 3, 0,
+        // Prawa œcianka
+        1, 5, 6,  6, 2, 1,
+        // Dolna œcianka
+        0, 1, 5,  5, 4, 0,
+        // Górna œcianka
+        3, 2, 6,  6, 7, 3
+    };
+
+    vector<float> colors = 
+    {
+        // Kolory dla ka¿dego wierzcho³ka (RGB)
+        1.0f, 0.0f, 0.0f,  // Czerwony
+        0.0f, 1.0f, 0.0f,  // Zielony
+        0.0f, 0.0f, 1.0f,  // Niebieski
+        1.0f, 1.0f, 0.0f,  // ¯ó³ty
+        1.0f, 0.0f, 1.0f,  // Fioletowy
+        0.0f, 1.0f, 1.0f,  // Turkusowy
+        1.0f, 1.0f, 1.0f,  // Bia³y
+        0.0f, 0.0f, 0.0f   // Czarny
+    };
+
+public:
+    void draw() const 
+{
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        // Przypisanie wierzcho³ków i kolorów
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+
+        // Rysowanie za pomoc¹ indeksów
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+
+        // Wy³¹czenie tablic
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+};
+
+
 Engine* Engine::instance = nullptr;
 
 // Przyk³ad u¿ycia
 void renderScene()
 {
+    /*
     glLoadIdentity();
     gluLookAt(0.0f, 0.0f, 2.0f, // Kamera ustawiona 2 jednostki od obiektu
         0.0f, 0.0f, 0.0f, // Punkt docelowy
@@ -153,6 +405,48 @@ void renderScene()
     glVertex2f(0.5f, -0.5f);
     glVertex2f(0.0f, 0.5f);
     glEnd();
+    */
+    //-------------------------------------
+    /*
+    glLoadIdentity();
+    gluLookAt(0.0f, 0.0f, 5.0f,  // Kamera
+        0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f);
+
+    Point point(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+    point.draw();
+
+    // Rysowanie linii
+    vector<float> lineVertices = { -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f };
+    vector<float> lineColors = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+    Line line(lineVertices, lineColors);
+    line.draw();
+
+    // Rysowanie trójk¹ta
+    vector<float> triangleVertices = 
+    {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+    vector<float> triangleColors = 
+    {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
+    };
+    Triangle triangle(triangleVertices, triangleColors);
+    triangle.draw();
+    ----------------------------------------------------------------
+    */
+
+    glLoadIdentity();
+    gluLookAt(0.0f, 0.0f, 3.0f,  // Kamera ustawiona 3 jednostki od obiektu
+        0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f);
+    // Rysowanie szeœcianu
+    Cube cube;
+    cube.draw();
 }
 
 
