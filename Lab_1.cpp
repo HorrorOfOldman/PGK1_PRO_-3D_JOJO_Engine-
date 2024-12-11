@@ -5,6 +5,8 @@
 #include <functional>
 #include <string>
 
+using namespace std;
+
 class Engine 
 {
 public:
@@ -15,6 +17,7 @@ public:
         glutInit(&argc, argv);
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
         glutInitWindowSize(width, height);
+        glEnable(GL_DEPTH_TEST);
         glutCreateWindow(title.c_str());
     }
 
@@ -57,17 +60,17 @@ public:
         glMatrixMode(GL_MODELVIEW);
     }
 
-    void setKeyboardCallback(std::function<void(unsigned char, int, int)> callback) 
+    void setKeyboardCallback(function<void(unsigned char, int, int)> callback) 
     {
         keyboardCallback = callback;
     }
 
-    void setMouseCallback(std::function<void(int, int, int, int)> callback)
+    void setMouseCallback(function<void(int, int, int, int)> callback)
     {
         mouseCallback = callback;
     }
 
-    void startMainLoop(std::function<void()> renderCallback) 
+    void startMainLoop(function<void()> renderCallback) 
     {
         this->renderCallback = renderCallback;
 
@@ -137,10 +140,14 @@ private:
 Engine* Engine::instance = nullptr;
 
 // Przyk³ad u¿ycia
-void renderScene() 
+void renderScene()
 {
     glLoadIdentity();
-    glColor3f(1.0f, 0.0f, 0.0f);
+    gluLookAt(0.0f, 0.0f, 2.0f, // Kamera ustawiona 2 jednostki od obiektu
+        0.0f, 0.0f, 0.0f, // Punkt docelowy
+        0.0f, 1.0f, 0.0f); // Wektor "up"
+
+    glColor3f(1.0f, 0.0f, 0.0f); // Kolor trójk¹ta (czerwony)
     glBegin(GL_TRIANGLES);
     glVertex2f(-0.5f, -0.5f);
     glVertex2f(0.5f, -0.5f);
@@ -148,18 +155,47 @@ void renderScene()
     glEnd();
 }
 
+
 int main(int argc, char** argv)
 {
     Engine engine(argc, argv, "FreeGLUT Engine", 800, 600);
-    engine.setClearColor(0.1f, 0.1f, 0.1f);
+    engine.setClearColor(0.1f, 0.1f, 0.1f);//szare okno
     engine.setProjection(true);
     engine.setFPS(60);
-    engine.setKeyboardCallback([](unsigned char key, int x, int y) 
+    engine.setKeyboardCallback([&engine](unsigned char key, int x, int y)
         {
-        if (key == 27)
-        { // ESC
+        switch (key)
+        {
+        case 27://ESC
+            cout << "Okno zniknie" << endl;
             exit(0);
+            break;
+        case 113://Q
+            cout << "Szare okno" << endl;
+            engine.setClearColor(0.3f, 0.3f, 0.3f); // Zmiana t³a na szaer
+            glutPostRedisplay(); // Odœwie¿ okno
+            break;
+        case 114://R
+            cout << "Czerowne okno" << endl;
+            engine.setClearColor(1.0f, 0.0f, 0.0f); // Zmiana t³a na czerwone
+            glutPostRedisplay(); // Odœwie¿ okno
+            break;
+        case 103://G
+            cout << "Zielone okno" << endl;
+            engine.setClearColor(0.0f, 1.0f, 0.0f); // Zmiana t³a na zielone
+            glutPostRedisplay(); // Odœwie¿ okno
+            break;
+        case 98://B
+            cout << "Niebieskie okno" << endl;
+            engine.setClearColor(0.0f, 0.0f, 1.0f); // Zmiana t³a na niebieskie
+            glutPostRedisplay(); // Odœwie¿ okno
+            break;
+
+        default:
+            cout<< "Nacisnieo klawisz " << (char)key << " kod " << (int)key << "\n";
+            break;
         }
+   
         });
     engine.startMainLoop(renderScene);
     return 0;
