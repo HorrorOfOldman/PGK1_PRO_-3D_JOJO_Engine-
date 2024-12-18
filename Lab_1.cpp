@@ -23,6 +23,9 @@ public:
         glutCreateWindow(title.c_str());
     }
 
+    function<void(int, int, int)> specialCallback;
+
+
     void setFullscreen(bool enable) {
         if (enable) 
         {
@@ -67,6 +70,11 @@ public:
         keyboardCallback = callback;
     }
 
+    void setSpecialCallback(function<void(int, int, int)> callback)
+    {
+        specialCallback = callback;
+    }
+
     void setMouseCallback(function<void(int, int, int, int)> callback)
     {
         mouseCallback = callback;
@@ -96,98 +104,18 @@ public:
                 instance->mouseCallback(button, state, x, y);
             }
             });
+        glutSpecialFunc([](int key, int x, int y)
+            {
+                if (instance->specialCallback)
+                {
+                    instance->specialCallback(key, x, y);
+                }
+            });
 
         instance = this;
         glutMainLoop();
     }
-    #include <vector>
-#include <GL/freeglut.h>
-
-class Primitive {
-protected:
-    std::vector<float> vertices; // Tablica wierzcho³ków (x, y, z)
-    std::vector<float> colors;   // Tablica kolorów (r, g, b)
-
-public:
-    Primitive() = default;
-
-    // Metoda do ustawiania wierzcho³ków
-    void setVertices(const std::vector<float>& vertexData) {
-        vertices = vertexData;
-    }
-
-    // Metoda do ustawiania kolorów
-    void setColors(const std::vector<float>& colorData) {
-        colors = colorData;
-    }
-
-    // Rysowanie prymitywu za pomoc¹ glDrawArrays
-    virtual void draw(GLenum mode) const {
-        if (vertices.empty() || colors.empty()) {
-            return; // Brak danych do rysowania
-        }
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        // Przypisz tablice wierzcho³ków i kolorów
-        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
-        glColorPointer(3, GL_FLOAT, 0, colors.data());
-
-        // Rysuj prymityw
-        glDrawArrays(mode, 0, vertices.size() / 3);
-
-        // Wy³¹cz tablice
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-    }
-};
-
-// Klasa dla punktu
-class Point : public Primitive 
-{
-public:
-    Point(float x, float y, float z, float r, float g, float b)
-    {
-        vertices = {x, y, z};
-        colors = {r, g, b};
-    }
-
-    void draw() const
-    {
-        Primitive::draw(GL_POINTS);
-    }
-};
-
-// Klasa dla linii
-class Line : public Primitive
-{
-public:
-    Line(const std::vector<float>& vertexData, const std::vector<float>& colorData)
-    {
-        setVertices(vertexData);
-        setColors(colorData);
-    }
-
-    void draw() const 
-    {
-        Primitive::draw(GL_LINES);
-    }
-};
-
-// Klasa dla trójk¹ta
-class Triangle : public Primitive {
-public:
-    Triangle(const std::vector<float>& vertexData, const std::vector<float>& colorData) {
-        setVertices(vertexData);
-        setColors(colorData);
-    }
-
-    void draw() const
-    {
-        Primitive::draw(GL_TRIANGLES);
-    }
-};
+    
 
 
     ~Engine() {
@@ -227,9 +155,6 @@ private:
         }
     }
 };
-
-#include <vector>
-#include <GL/freeglut.h>
 
 class Primitive {
 protected:
@@ -484,12 +409,32 @@ int main(int argc, char** argv)
             engine.setClearColor(0.0f, 0.0f, 1.0f); // Zmiana t³a na niebieskie
             glutPostRedisplay(); // Odœwie¿ okno
             break;
-
-        default:
+                default:
             cout<< "Nacisnieo klawisz " << (char)key << " kod " << (int)key << "\n";
             break;
         }
-   
+
+        engine.setSpecialCallback([&engine](int key, int x, int y)
+            {
+                switch (key)
+                {
+                case GLUT_KEY_UP:
+                    cout << "Strzalka /\\ \n";
+                    break;
+                case GLUT_KEY_DOWN:
+                    cout << "Strzalka \\/ \n";
+                    break;
+                case GLUT_KEY_LEFT:
+                    cout << "Strzalka <- \n";
+                    break;
+                case GLUT_KEY_RIGHT:
+                    cout << "Strzalka -> \n";
+                    break;
+                default:
+                    cout << "Nacisnieto specjalny klawisz o kodzie: " << key << "\n";
+                    break;
+                }
+            });
         });
     engine.startMainLoop(renderScene);
     return 0;
