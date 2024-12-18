@@ -143,20 +143,21 @@ private:
         glutSwapBuffers();
     }
 
-    void idle()
-    {
-        static int lastTime = glutGet(GLUT_ELAPSED_TIME);
-        int currentTime = glutGet(GLUT_ELAPSED_TIME);
-        int elapsed = currentTime - lastTime;
+   void idle() {
+    static int lastTime = glutGet(GLUT_ELAPSED_TIME);
+    int currentTime = glutGet(GLUT_ELAPSED_TIME);
+    int elapsed = currentTime - lastTime;
 
-        if (elapsed > 1000 / fps)
-        {
-            glutPostRedisplay();
-            lastTime = currentTime;
-        }
+    if (elapsed > 1000 / fps) { // Kontrola liczby klatek na sekundê
+        glutPostRedisplay();   // Wymuœ odœwie¿enie
+        lastTime = currentTime;
     }
+}
+
 };
 
+
+/*
 class Primitive {
 protected:
     vector<float> vertices; // Tablica wierzcho³ków (x, y, z)
@@ -312,7 +313,7 @@ public:
         glDisableClientState(GL_COLOR_ARRAY);
     }
 };
-
+*/
 
 class Observer {
 private:
@@ -345,12 +346,222 @@ public:
     }
 };
 
+//------------------------------------
+class GameObject 
+{
+public:
+    virtual ~GameObject() = default; // Wirtualny destruktor
+    virtual void update() = 0;       // Metoda abstrakcyjna do aktualizacji
+};
+
+class UpdatableObject : public virtual GameObject 
+{
+public:
+    virtual void update() override = 0; // Wirtualna metoda aktualizacji
+};
+
+class DrawableObject : public virtual GameObject
+{
+public:
+    virtual void draw() const = 0; // Wirtualna metoda do rysowania obiektu
+};
+
+class TransformableObject : public virtual GameObject
+{
+public:
+    virtual void translate(float dx, float dy, float dz) = 0;
+    virtual void rotate(float angle, float x, float y, float z) = 0;
+    virtual void scale(float sx, float sy, float sz) = 0;
+};
+
+class ShapeObject : public DrawableObject, public TransformableObject 
+{
+protected:
+    float posX = 0.0f, posY = 0.0f, posZ = 0.0f;
+    float rotX = 0.0f, rotY = 0.0f, rotZ = 0.0f;
+    float scaleX = 1.0f, scaleY = 1.0f, scaleZ = 1.0f;
+
+public:
+    void translate(float dx, float dy, float dz) override {
+        posX += dx; posY += dy; posZ += dz;
+    }
+
+    void rotate(float angle, float x, float y, float z) override {
+        // Rotacja wokó³ osi (prosty przyk³ad bez macierzy)
+        if (x) rotX += angle;
+        if (y) rotY += angle;
+        if (z) rotZ += angle;
+    }
+
+    void scale(float sx, float sy, float sz) override {
+        scaleX *= sx; scaleY *= sy; scaleZ *= sz;
+    }
+
+    virtual void draw() const override = 0; // Ka¿dy kszta³t implementuje w³asne rysowanie
+};
+
+
+//*
+class Point : public ShapeObject 
+{
+private:
+    float r, g, b; // Kolor punktu
+
+public:
+    Point(float x, float y, float z, float red, float green, float blue)
+        : r(red), g(green), b(blue) {
+        translate(x, y, z);
+    }
+
+    void draw() const override {
+        glColor3f(r, g, b);
+        glPointSize(5.0f);
+        glBegin(GL_POINTS);
+        glVertex3f(posX, posY, posZ);
+        glEnd();
+    }
+};
+
+class LineSegment : public ShapeObject 
+{
+private:
+    float x2, y2, z2; // Drugi punkt linii
+    float r, g, b;    // Kolor linii
+
+public:
+    LineSegment(float x1, float y1, float z1, float x2, float y2, float z2, float red, float green, float blue)
+        : x2(x2), y2(y2), z2(z2), r(red), g(green), b(blue) {
+        translate(x1, y1, z1);
+    }
+
+    void draw() const override {
+        glColor3f(r, g, b);
+        glBegin(GL_LINES);
+        glVertex3f(posX, posY, posZ);
+        glVertex3f(x2, y2, z2);
+        glEnd();
+    }
+};
+
+class Triangle : public ShapeObject 
+{
+private:
+    std::vector<float> vertices;
+    std::vector<float> colors;
+
+public:
+    Triangle(const std::vector<float>& vertexData, const std::vector<float>& colorData)
+        : vertices(vertexData), colors(colorData) {}
+
+    void draw() const override {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+};
+//*/
+
+class Cube : public ShapeObject {
+public:
+    Cube() {
+        // Inicjalizujemy wierzcho³ki i kolory (domyœlnie 1x1x1)
+        vertices = {
+            // Tylna œcianka
+            -0.5f, -0.5f, -0.5f,  0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  -0.5f,  0.5f, -0.5f,
+            // Przednia œcianka
+            -0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  -0.5f,  0.5f,  0.5f
+        };
+
+        colors = {
+            // Kolory tylnej œcianki
+            1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+            // Kolory przedniej œcianki
+            0.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f
+        };
+
+        indices = {
+            // Tylna œcianka
+            0, 1, 2,  2, 3, 0,
+            // Przednia œcianka
+            4, 5, 6,  6, 7, 4,
+            // Lewa œcianka
+            0, 3, 7,  7, 4, 0,
+            // Prawa œcianka
+            1, 2, 6,  6, 5, 1,
+            // Dolna œcianka
+            0, 1, 5,  5, 4, 0,
+            // Górna œcianka
+            3, 2, 6,  6, 7, 3
+        };
+    }
+
+    void draw() const
+    {
+        glPushMatrix(); // Zachowanie aktualnej macierzy przekszta³ceñ
+
+        // Przekszta³cenia szeœcianu
+        glTranslatef(posX, posY, posZ);
+        glRotatef(rotX, 1.0f, 0.0f, 0.0f);
+        glRotatef(rotY, 0.0f, 1.0f, 0.0f);
+        glRotatef(rotZ, 0.0f, 0.0f, 1.0f);
+        glScalef(scaleX, scaleY, scaleZ);
+
+        // W³¹czenie tablic wierzcho³ków i kolorów
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+        glColorPointer(3, GL_FLOAT, 0, colors.data());
+
+        // Rysowanie elementów
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+
+        // Wy³¹czenie tablic
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        glPopMatrix(); // Przywrócenie macierzy przekszta³ceñ
+    }
+
+
+    void translate(float dx, float dy, float dz) override {
+        posX += dx; posY += dy; posZ += dz;
+    }
+
+    void rotate(float angle, float x, float y, float z) override {
+        if (x) rotX += angle;
+        if (y) rotY += angle;
+        if (z) rotZ += angle;
+    }
+
+    void scale(float sx, float sy, float sz) override {
+        scaleX *= sx; scaleY *= sy; scaleZ *= sz;
+    }
+
+    void update() override {
+        // Pusta implementacja, bo nie mamy logiki animacji w tej chwili
+    }
+
+private:
+    std::vector<float> vertices;       // Wierzcho³ki
+    std::vector<float> colors;         // Kolory
+    std::vector<unsigned int> indices; // Indeksy
+};
+
 
 
 
 
 Engine* Engine::instance = nullptr;
 
+/*
 // Przyk³ad u¿ycia
 void renderScene(Observer& observer) 
 {
@@ -416,96 +627,35 @@ void renderScene(Observer& observer)
     // Rysowanie szeœcianu
     //Cube cube;
    cube.draw();
-   */
 }
+//*/
+
+// Globalny obiekt szeœcianu
+Cube cube;
+void renderScene()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Czyszczenie ekranu i bufora g³êbokoœci
+
+    // Resetowanie macierzy widoku
+    glLoadIdentity();
+
+    // Ustawienie kamery (gluLookAt)
+    gluLookAt(0.0f, 0.0f, 5.0f, // Pozycja kamery
+        0.0f, 0.0f, 0.0f, // Punkt, na który kamera patrzy
+        0.0f, 1.0f, 0.0f); // Wektor "up"
+
+// Rysowanie szeœcianu
+    cube.draw();
+
+    // Zamiana buforów
+    glutSwapBuffers();
+    glLoadIdentity(); // Resetuj macierz modelu-widoku
+
+}
+
+
 
 /*
-int main(int argc, char** argv)
-{
-    Engine engine(argc, argv, "FreeGLUT Engine", 800, 600);
-
-    engine.setClearColor(0.1f, 0.1f, 0.1f);//szare okno
-    engine.setProjection(true);
-    engine.setFPS(60);
-    
-    Observer observer(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f); // Kamera na (0,0,5), patrzy na (0,0,0)
-
-    engine.setKeyboardCallback([&observer](unsigned char key, int x, int y) {
-        switch (key) 
-    {
-        case 'w': observer.move(0, 0, -0.1f); break; // Przesuñ do przodu
-        case 's': observer.move(0, 0, 0.1f); break;  // Przesuñ do ty³u
-        case 'a': observer.move(-0.1f, 0, 0); break; // Przesuñ w lewo
-        case 'd': observer.move(0.1f, 0, 0); break;  // Przesuñ w prawo
-        case 'q': observer.rotate(5.0f, 0, 1, 0); break;  // Obrót w lewo
-        case 'e': observer.rotate(-5.0f, 0, 1, 0); break; // Obrót w prawo
-    }
-    glutPostRedisplay(); // Odœwie¿enie ekranu po zmianie widoku
-    });
-
-
-    engine.setKeyboardCallback([&engine](unsigned char key, int x, int y)
-        {
-        switch (key)
-        {
-        case 27://ESC
-            cout << "Okno zniknie" << endl;
-            exit(0);
-            break;
-        case 118://V
-            cout << "Szare okno" << endl;
-            engine.setClearColor(0.3f, 0.3f, 0.3f); // Zmiana t³a na szaer
-            glutPostRedisplay(); // Odœwie¿ okno
-            break;
-        case 114://R
-            cout << "Czerowne okno" << endl;
-            engine.setClearColor(1.0f, 0.0f, 0.0f); // Zmiana t³a na czerwone
-            glutPostRedisplay(); // Odœwie¿ okno
-            break;
-        case 103://G
-            cout << "Zielone okno" << endl;
-            engine.setClearColor(0.0f, 1.0f, 0.0f); // Zmiana t³a na zielone
-            glutPostRedisplay(); // Odœwie¿ okno
-            break;
-        case 'b'://B
-            cout << "Niebieskie okno" << endl;
-            engine.setClearColor(0.0f, 0.0f, 1.0f); // Zmiana t³a na niebieskie
-            glutPostRedisplay(); // Odœwie¿ okno
-            break;
-                default:
-            cout<< "Nacisnieo klawisz " << (char)key << " kod " << (int)key << "\n";
-            break;
-        }
-
-        engine.setSpecialCallback([&engine](int key, int x, int y)
-            {
-                switch (key)
-                {
-                case GLUT_KEY_UP:
-                    cout << "Strzalka /\\ \n";
-                    break;
-                case GLUT_KEY_DOWN:
-                    cout << "Strzalka \\/ \n";
-                    break;
-                case GLUT_KEY_LEFT:
-                    cout << "Strzalka <- \n";
-                    break;
-                case GLUT_KEY_RIGHT:
-                    cout << "Strzalka -> \n";
-                    break;
-                default:
-                    cout << "Nacisnieto specjalny klawisz o kodzie: " << key << "\n";
-                    break;
-                }
-            });
-        });
-    engine.startMainLoop([&observer]() {
-        renderScene(observer);
-        });
-    return 0;
-}
-*/
-
 int main(int argc, char** argv) {
     Engine engine(argc, argv, "FreeGLUT Engine", 800, 600);
     engine.setClearColor(0.1f, 0.1f, 0.1f);
@@ -585,6 +735,43 @@ int main(int argc, char** argv) {
 
     engine.startMainLoop([&observer]() {
         renderScene(observer);
+        });
+
+    return 0;
+}
+*/
+
+// Funkcja main
+int main(int argc, char** argv)
+{
+    Engine engine(argc, argv, "FreeGLUT Cube Example", 800, 600);
+    engine.setClearColor(0.1f, 0.1f, 0.1f);
+    engine.setProjection(true); // W³¹cz perspektywê
+    engine.setFPS(60);
+
+    // Debug: ustawienie pocz¹tkowej pozycji szeœcianu
+    cube.translate(0.0f, 0.0f, 0.0f); // Szeœcian wyœrodkowany
+
+    // Ustawienie sterowania
+    engine.setKeyboardCallback([](unsigned char key, int x, int y) {
+        switch (key) {
+        case 'w': cube.translate(0, 0, -0.1f); break; // Przesuñ do przodu
+        case 's': cube.translate(0, 0, 0.1f); break;  // Przesuñ do ty³u
+        case 'a': cube.translate(-0.1f, 0, 0); break; // Przesuñ w lewo
+        case 'd': cube.translate(0.1f, 0, 0); break;  // Przesuñ w prawo
+        case 'q': cube.rotate(5.0f, 0, 1, 0); break;  // Obrót w lewo
+        case 'e': cube.rotate(-5.0f, 0, 1, 0); break; // Obrót w prawo
+        case '+': cube.scale(1.1f, 1.1f, 1.1f); break; // Powiêksz
+        case '-': cube.scale(0.9f, 0.9f, 0.9f); break; // Pomniejsz
+        case 27: exit(0); break; // Wyjœcie (klawisz ESC)
+        default: break;
+        }
+        glutPostRedisplay(); // Wymuœ odœwie¿enie ekranu
+        });
+
+    // Uruchomienie pêtli g³ównej
+    engine.startMainLoop([]() {
+        renderScene();
         });
 
     return 0;
