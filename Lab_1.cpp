@@ -120,7 +120,7 @@ public:
 
 
     ~Engine() {
-        // Sprz¹tanie (FreeGLUT sam zwalnia pamiêæ)
+        // SprzÂ¹tanie (FreeGLUT sam zwalnia pamiÃªÃ¦)
         std::cout << "Shutting down engine..." << std::endl;
     }
 
@@ -159,25 +159,25 @@ private:
 
 class Primitive {
 protected:
-    vector<float> vertices; // Tablica wierzcho³ków (x, y, z)
-    vector<float> colors;   // Tablica kolorów (r, g, b)
+    vector<float> vertices; // Tablica wierzchoÂ³kÃ³w (x, y, z)
+    vector<float> colors;   // Tablica kolorÃ³w (r, g, b)
 
 public:
     Primitive() = default;
 
-    // Metoda do ustawiania wierzcho³ków
+    // Metoda do ustawiania wierzchoÂ³kÃ³w
     void setVertices(const vector<float>& vertexData)
     {
         vertices = vertexData;
     }
 
-    // Metoda do ustawiania kolorów
+    // Metoda do ustawiania kolorÃ³w
     void setColors(const vector<float>& colorData)
     {
         colors = colorData;
     }
 
-    // Rysowanie prymitywu za pomoc¹ glDrawArrays
+    // Rysowanie prymitywu za pomocÂ¹ glDrawArrays
     virtual void draw(GLenum mode) const 
     {
         if (vertices.empty() || colors.empty()) 
@@ -188,14 +188,14 @@ public:
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        // Przypisz tablice wierzcho³ków i kolorów
+        // Przypisz tablice wierzchoÂ³kÃ³w i kolorÃ³w
         glVertexPointer(3, GL_FLOAT, 0, vertices.data());
         glColorPointer(3, GL_FLOAT, 0, colors.data());
 
         // Rysuj prymityw
         glDrawArrays(mode, 0, vertices.size() / 3);
 
-        // Wy³¹cz tablice
+        // WyÂ³Â¹cz tablice
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
     }
@@ -232,7 +232,7 @@ public:
     }
 };
 
-// Klasa dla trójk¹ta
+// Klasa dla trÃ³jkÂ¹ta
 class Triangle : public Primitive 
 {
 public:
@@ -248,49 +248,49 @@ public:
     }
 };
 
-// Klasa dla szeœcianu
+// Klasa dla szeÅ“cianu
 class Cube
 {
 private:
     vector<float> vertices =
     {
-        // Wierzcho³ki szeœcianu (8 wierzcho³ków)
-        -0.5f, -0.5f, -0.5f,  // 0: Lewy dolny ty³
-         0.5f, -0.5f, -0.5f,  // 1: Prawy dolny ty³
-         0.5f,  0.5f, -0.5f,  // 2: Prawy górny ty³
-        -0.5f,  0.5f, -0.5f,  // 3: Lewy górny ty³
-        -0.5f, -0.5f,  0.5f,  // 4: Lewy dolny przód
-         0.5f, -0.5f,  0.5f,  // 5: Prawy dolny przód
-         0.5f,  0.5f,  0.5f,  // 6: Prawy górny przód
-        -0.5f,  0.5f,  0.5f   // 7: Lewy górny przód
+        // WierzchoÂ³ki szeÅ“cianu (8 wierzchoÂ³kÃ³w)
+        -0.5f, -0.5f, -0.5f,  // 0: Lewy dolny tyÂ³
+         0.5f, -0.5f, -0.5f,  // 1: Prawy dolny tyÂ³
+         0.5f,  0.5f, -0.5f,  // 2: Prawy gÃ³rny tyÂ³
+        -0.5f,  0.5f, -0.5f,  // 3: Lewy gÃ³rny tyÂ³
+        -0.5f, -0.5f,  0.5f,  // 4: Lewy dolny przÃ³d
+         0.5f, -0.5f,  0.5f,  // 5: Prawy dolny przÃ³d
+         0.5f,  0.5f,  0.5f,  // 6: Prawy gÃ³rny przÃ³d
+        -0.5f,  0.5f,  0.5f   // 7: Lewy gÃ³rny przÃ³d
     };
 
     vector<unsigned int> indices = 
     {
-        // Tylna œcianka
+        // Tylna Å“cianka
         0, 1, 2,  2, 3, 0,
-        // Przednia œcianka
+        // Przednia Å“cianka
         4, 5, 6,  6, 7, 4,
-        // Lewa œcianka
+        // Lewa Å“cianka
         0, 4, 7,  7, 3, 0,
-        // Prawa œcianka
+        // Prawa Å“cianka
         1, 5, 6,  6, 2, 1,
-        // Dolna œcianka
+        // Dolna Å“cianka
         0, 1, 5,  5, 4, 0,
-        // Górna œcianka
+        // GÃ³rna Å“cianka
         3, 2, 6,  6, 7, 3
     };
 
     vector<float> colors = 
     {
-        // Kolory dla ka¿dego wierzcho³ka (RGB)
+        // Kolory dla kaÂ¿dego wierzchoÂ³ka (RGB)
         1.0f, 0.0f, 0.0f,  // Czerwony
         0.0f, 1.0f, 0.0f,  // Zielony
         0.0f, 0.0f, 1.0f,  // Niebieski
-        1.0f, 1.0f, 0.0f,  // ¯ó³ty
+        1.0f, 1.0f, 0.0f,  // Â¯Ã³Â³ty
         1.0f, 0.0f, 1.0f,  // Fioletowy
         0.0f, 1.0f, 1.0f,  // Turkusowy
-        1.0f, 1.0f, 1.0f,  // Bia³y
+        1.0f, 1.0f, 1.0f,  // BiaÂ³y
         0.0f, 0.0f, 0.0f   // Czarny
     };
 
@@ -300,14 +300,14 @@ public:
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        // Przypisanie wierzcho³ków i kolorów
+        // Przypisanie wierzchoÂ³kÃ³w i kolorÃ³w
         glVertexPointer(3, GL_FLOAT, 0, vertices.data());
         glColorPointer(3, GL_FLOAT, 0, colors.data());
 
-        // Rysowanie za pomoc¹ indeksów
+        // Rysowanie za pomocÂ¹ indeksÃ³w
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
-        // Wy³¹czenie tablic
+        // WyÂ³Â¹czenie tablic
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
     }
@@ -317,7 +317,7 @@ public:
 class Observer {
 private:
     float posX, posY, posZ;    // Pozycja kamery
-    float targetX, targetY, targetZ; // Punkt, na który patrzy
+    float targetX, targetY, targetZ; // Punkt, na ktÃ³ry patrzy
     float upX, upY, upZ;       // Wektor "up"
 
 public:
@@ -334,7 +334,7 @@ public:
     }
 
     void rotate(float angle, float x, float y, float z) {
-        // Rotacja punktu docelowego wokó³ kamery (prosty przyk³ad)
+        // Rotacja punktu docelowego wokÃ³Â³ kamery (prosty przykÂ³ad)
         float rad = angle * M_PI / 180.0f;
         float cosA = cos(rad), sinA = sin(rad);
 
@@ -351,11 +351,11 @@ public:
 
 Engine* Engine::instance = nullptr;
 
-// Przyk³ad u¿ycia
+// PrzykÂ³ad uÂ¿ycia
 void renderScene(Observer& observer) 
 {
     glLoadIdentity();
-    observer.applyView(); // U¿ycie istniej¹cego obserwatora
+    observer.applyView(); // UÂ¿ycie istniejÂ¹cego obserwatora
 
     // Rysowanie obiektu
     Cube cube;
@@ -368,7 +368,7 @@ void renderScene(Observer& observer)
         0.0f, 0.0f, 0.0f, // Punkt docelowy
         0.0f, 1.0f, 0.0f); // Wektor "up"
 
-    glColor3f(1.0f, 0.0f, 0.0f); // Kolor trójk¹ta (czerwony)
+    glColor3f(1.0f, 0.0f, 0.0f); // Kolor trÃ³jkÂ¹ta (czerwony)
     glBegin(GL_TRIANGLES);
     glVertex2f(-0.5f, -0.5f);
     glVertex2f(0.5f, -0.5f);
@@ -391,7 +391,7 @@ void renderScene(Observer& observer)
     Line line(lineVertices, lineColors);
     line.draw();
 
-    // Rysowanie trójk¹ta
+    // Rysowanie trÃ³jkÂ¹ta
     vector<float> triangleVertices = 
     {
         -0.5f, -0.5f, 0.0f,
@@ -413,7 +413,7 @@ void renderScene(Observer& observer)
     gluLookAt(0.0f, 0.0f, 3.0f,  // Kamera ustawiona 3 jednostki od obiektu
         0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f);
-    // Rysowanie szeœcianu
+    // Rysowanie szeÅ“cianu
     //Cube cube;
    cube.draw();
    */
@@ -433,14 +433,14 @@ int main(int argc, char** argv)
     engine.setKeyboardCallback([&observer](unsigned char key, int x, int y) {
         switch (key) 
     {
-        case 'w': observer.move(0, 0, -0.1f); break; // Przesuñ do przodu
-        case 's': observer.move(0, 0, 0.1f); break;  // Przesuñ do ty³u
-        case 'a': observer.move(-0.1f, 0, 0); break; // Przesuñ w lewo
-        case 'd': observer.move(0.1f, 0, 0); break;  // Przesuñ w prawo
-        case 'q': observer.rotate(5.0f, 0, 1, 0); break;  // Obrót w lewo
-        case 'e': observer.rotate(-5.0f, 0, 1, 0); break; // Obrót w prawo
+        case 'w': observer.move(0, 0, -0.1f); break; // PrzesuÃ± do przodu
+        case 's': observer.move(0, 0, 0.1f); break;  // PrzesuÃ± do tyÂ³u
+        case 'a': observer.move(-0.1f, 0, 0); break; // PrzesuÃ± w lewo
+        case 'd': observer.move(0.1f, 0, 0); break;  // PrzesuÃ± w prawo
+        case 'q': observer.rotate(5.0f, 0, 1, 0); break;  // ObrÃ³t w lewo
+        case 'e': observer.rotate(-5.0f, 0, 1, 0); break; // ObrÃ³t w prawo
     }
-    glutPostRedisplay(); // Odœwie¿enie ekranu po zmianie widoku
+    glutPostRedisplay(); // OdÅ“wieÂ¿enie ekranu po zmianie widoku
     });
 
 
@@ -454,23 +454,23 @@ int main(int argc, char** argv)
             break;
         case 118://V
             cout << "Szare okno" << endl;
-            engine.setClearColor(0.3f, 0.3f, 0.3f); // Zmiana t³a na szaer
-            glutPostRedisplay(); // Odœwie¿ okno
+            engine.setClearColor(0.3f, 0.3f, 0.3f); // Zmiana tÂ³a na szaer
+            glutPostRedisplay(); // OdÅ“wieÂ¿ okno
             break;
         case 114://R
             cout << "Czerowne okno" << endl;
-            engine.setClearColor(1.0f, 0.0f, 0.0f); // Zmiana t³a na czerwone
-            glutPostRedisplay(); // Odœwie¿ okno
+            engine.setClearColor(1.0f, 0.0f, 0.0f); // Zmiana tÂ³a na czerwone
+            glutPostRedisplay(); // OdÅ“wieÂ¿ okno
             break;
         case 103://G
             cout << "Zielone okno" << endl;
-            engine.setClearColor(0.0f, 1.0f, 0.0f); // Zmiana t³a na zielone
-            glutPostRedisplay(); // Odœwie¿ okno
+            engine.setClearColor(0.0f, 1.0f, 0.0f); // Zmiana tÂ³a na zielone
+            glutPostRedisplay(); // OdÅ“wieÂ¿ okno
             break;
         case 'b'://B
             cout << "Niebieskie okno" << endl;
-            engine.setClearColor(0.0f, 0.0f, 1.0f); // Zmiana t³a na niebieskie
-            glutPostRedisplay(); // Odœwie¿ okno
+            engine.setClearColor(0.0f, 0.0f, 1.0f); // Zmiana tÂ³a na niebieskie
+            glutPostRedisplay(); // OdÅ“wieÂ¿ okno
             break;
                 default:
             cout<< "Nacisnieo klawisz " << (char)key << " kod " << (int)key << "\n";
@@ -516,16 +516,16 @@ int main(int argc, char** argv) {
 
     engine.setKeyboardCallback([&engine, &observer](unsigned char key, int x, int y) {
         switch (key) {
-            // --- Sterowanie kamer¹ ---
-        case 'w': observer.move(0, 0, -0.1f); break; // Przesuñ do przodu
-        case 's': observer.move(0, 0, 0.1f); break;  // Przesuñ do ty³u
-        case 'a': observer.move(-0.1f, 0, 0); break; // Przesuñ w lewo
-        case 'd': observer.move(0.1f, 0, 0); break;  // Przesuñ w prawo
-        case 'q': observer.rotate(5.0f, 0, 1, 0); break;  // Obrót w lewo
-        case 'e': observer.rotate(-5.0f, 0, 1, 0); break; // Obrót w prawo
+            // --- Sterowanie kamerÂ¹ ---
+        case 'w': observer.move(0, 0, -0.1f); break; // PrzesuÃ± do przodu
+        case 's': observer.move(0, 0, 0.1f); break;  // PrzesuÃ± do tyÂ³u
+        case 'a': observer.move(-0.1f, 0, 0); break; // PrzesuÃ± w lewo
+        case 'd': observer.move(0.1f, 0, 0); break;  // PrzesuÃ± w prawo
+        case 'q': observer.rotate(5.0f, 0, 1, 0); break;  // ObrÃ³t w lewo
+        case 'e': observer.rotate(-5.0f, 0, 1, 0); break; // ObrÃ³t w prawo
 
-        // --- Zmiana kolorów t³a ---
-        case 27: // ESC - zamkniêcie
+        // --- Zmiana kolorÃ³w tÂ³a ---
+        case 27: // ESC - zamkniÃªcie
             cout << "Okno zniknie" << endl;
             exit(0);
             break;
@@ -546,30 +546,30 @@ int main(int argc, char** argv) {
             engine.setClearColor(0.0f, 0.0f, 1.0f);
             break;
 
-            // --- Domyœlny przypadek ---
+            // --- DomyÅ“lny przypadek ---
         default:
             cout << "Nacisnieto klawisz " << (char)key << " kod " << (int)key << "\n";
             break;
         }
-        // Wymuœ odœwie¿enie ekranu
+        // WymuÅ“ odÅ“wieÂ¿enie ekranu
         glutPostRedisplay();
         });
     engine.setSpecialCallback([&observer](int key, int x, int y) {
         switch (key) {
         case GLUT_KEY_UP:
-            cout << "Strza³ka w górê - ruch do przodu" << endl;
+            cout << "Strzalka w gore - ruch do przodu" << endl;
             observer.move(0, 0, -0.1f);
             break;
         case GLUT_KEY_DOWN:
-            cout << "Strza³ka w dó³ - ruch do ty³u" << endl;
+            cout << "Strzalka w dol - ruch do tylu" << endl;
             observer.move(0, 0, 0.1f);
             break;
         case GLUT_KEY_LEFT:
-            cout << "Strza³ka w lewo - rotacja w lewo" << endl;
+            cout << "Strzalka w lewo - rotacja w lewo" << endl;
             observer.rotate(5.0f, 0, 1, 0);
             break;
         case GLUT_KEY_RIGHT:
-            cout << "Strza³ka w prawo - rotacja w prawo" << endl;
+            cout << "Strzalka w prawo - rotacja w prawo" << endl;
             observer.rotate(-5.0f, 0, 1, 0);
             break;
         default:
@@ -577,7 +577,7 @@ int main(int argc, char** argv) {
             break;
         }
 
-        // Wymuœ odœwie¿enie ekranu
+        // WymuÅ“ odÅ“wieÂ¿enie ekranu
         glutPostRedisplay();
         });
 
