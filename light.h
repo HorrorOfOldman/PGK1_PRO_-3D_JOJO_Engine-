@@ -3,7 +3,12 @@
 
 #include "includy.h"
 
-class Light {
+/**
+* @class Light
+* @brief Klasa odpowiadaj¹ca za oœwietlenie w programie
+*/
+class Light 
+{
 public:
 	glm::vec3 position;
 	glm::vec3 ambient;
@@ -13,7 +18,8 @@ public:
 	Light(glm::vec3 pos, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec)
 		: position(pos), ambient(amb), diffuse(diff), specular(spec) {}
 
-	void setupLight(GLenum lightID) {
+	void setupLight(GLenum lightID) 
+	{
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 
@@ -31,8 +37,11 @@ public:
 	}
 };
 
-// Function to set material properties
-void setMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess) {
+/**
+* @brief Funkcja która odpowiada za materia³ na obiekcie
+*/
+void setMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess) 
+{
 	GLfloat matAmbient[] = { ambient.x, ambient.y, ambient.z, 1.0f };
 	GLfloat matDiffuse[] = { diffuse.x, diffuse.y, diffuse.z, 1.0f };
 	GLfloat matSpecular[] = { specular.x, specular.y, specular.z, 1.0f };

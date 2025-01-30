@@ -5,29 +5,36 @@
 
 #define M_PI 3.14
 
-// Class Observer (Camera)
+/**
+* @class Observer
+* @brief Klasa będąca kamerą w naszym programie
+*/
 class Observer
 {
 public:
-	glm::mat4 getViewMatrix() {
+	glm::mat4 getViewMatrix() 
+	{
 		return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	}
-
-	void processKeyboard(int key) {
+	
+	//sterowanie kamerą
+	void processKeyboard(int key) 
+	{
 		switch (key) {
 		case 'w': cameraPos += CAMERA_SPEED * cameraFront; break;
 		case 's': cameraPos -= CAMERA_SPEED * cameraFront; break;
 		case 'a': cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * CAMERA_SPEED; break;
 		case 'd': cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * CAMERA_SPEED; break;
-		case 'q': cameraPos += CAMERA_SPEED * cameraUp; break; // Move camera up
-		case 'e': cameraPos -= CAMERA_SPEED * cameraUp; break; // Move camera down
+		case 'q': cameraPos += CAMERA_SPEED * cameraUp; break; 
+		case 'e': cameraPos -= CAMERA_SPEED * cameraUp; break;
 		case 27: exit(0); break;
 		default: cout << "Nacisnieto klawisz " << (char)key << " kod " << (int)key << "\n";	break;
 		}
 	}
 
-	
-	void processMouse(float xoffset, float yoffset) {
+	//obsługa myszki
+	void processMouse(float xoffset, float yoffset) 
+	{
 		xoffset *= MOUSE_SENSITIVITY;
 		yoffset *= MOUSE_SENSITIVITY;
 

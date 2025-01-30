@@ -1,7 +1,10 @@
 ﻿#pragma once
 #include "includy.h"
 
-
+/**
+* @class GameObject
+* @brief Klasa nadrzędna, po której dziedziczą pozostałe klasy, tworząc hierarchię
+*/
 class GameObject
 {
 public:
@@ -9,18 +12,33 @@ public:
 	virtual void update() = 0;       // Metoda abstrakcyjna do aktualizacji
 };
 
+/**
+* @class UpdatableObject
+* @brief Klasa dziedzicząca po GameObject
+* Odpowiada za obiekty które będą się aktualizować wraz z każdą następną klatką programu
+*/
 class UpdatableObject : public virtual GameObject
 {
 public:
 	virtual void update() override = 0; // Wirtualna metoda aktualizacji
 };
 
+/**
+* @class DrawableObject
+* @brief Klasa dziedzicząca po GameObject
+* Odpowiada za obiekty które będą rysowane w programie
+*/
 class DrawableObject : public virtual GameObject
 {
 public:
 	virtual void draw() const = 0; // Wirtualna metoda do rysowania obiektu
 };
 
+/**
+* @class TransformableObject
+* @brief Klasa dziedzicząca po GameObject
+* Odpowiada za obiekty które będą podawane transformacji w programie
+*/
 class TransformableObject : public virtual GameObject
 {
 public:
@@ -29,8 +47,12 @@ public:
 	virtual void scale(float sx, float sy, float sz) = 0;
 };
 
-class ShapeObject : public DrawableObject, public TransformableObject
-{
+/**
+* @class ShapeObject
+* @brief Klasa dziedzicząca po GameObject
+* Odpowiada za obiekty 3D
+*/
+class ShapeObject : public DrawableObject, public TransformableObject {
 protected:
 	float posX = 0.0f, posY = 0.0f, posZ = 0.0f;
 	float rotX = 0.0f, rotY = 0.0f, rotZ = 0.0f;
@@ -42,7 +64,6 @@ public:
 	}
 
 	void rotate(float angle, float x, float y, float z) override {
-		// Rotacja wokó³ osi (prosty przyk³ad bez macierzy)
 		if (x) rotX += angle;
 		if (y) rotY += angle;
 		if (z) rotZ += angle;
@@ -52,9 +73,16 @@ public:
 		scaleX *= sx; scaleY *= sy; scaleZ *= sz;
 	}
 
-	virtual void draw() const override = 0; // Ka¿dy kszta³t implementuje w³asne rysowanie
+	void draw() const override {
+		// Provide a default implementation (or leave it pure virtual if derived classes must implement it)
+	}
 };
 
+/**
+* @class Primitive
+* @brief Klasa dziedzicząca po DrawableObject i TransformableObject
+* Odpowiada za obiekty prymitywy typu linia, punkt, trójkąt
+*/
 class Primitive : public DrawableObject, public TransformableObject
 {
 protected:

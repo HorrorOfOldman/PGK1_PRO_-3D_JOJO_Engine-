@@ -1,4 +1,7 @@
 #pragma once
+/**
+* @brief S³u¿y by jednorazowo napisaæ #include "includy.h", i mieæ odrazu wszystkie nizbêdne biblioteki
+*/
 #pragma comment(lib, "freeglut.lib")
 #include <gl/freeglut.h>
 #include <glm/glm.hpp>

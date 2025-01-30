@@ -2,6 +2,11 @@
 #include "includy.h"
 #include "GameObject.h"
 
+/**
+* @class POINT
+* @brief Klasa dziedzicząca po Primitive
+* reprezentuje punkt
+*/
 class Point : public Primitive
 {
 public:
@@ -17,6 +22,11 @@ public:
 	}
 };
 
+/**
+* @class Line
+* @brief Klasa dziedzicząca po Primitive
+* reprezentuje prostą
+*/
 class Line : public Primitive
 {
 public:
@@ -31,6 +41,11 @@ public:
 	}
 };
 
+/**
+* @class Triangle
+* @brief Klasa dziedzicząca po Primitive
+* reprezentuje trójkąt
+*/
 class Triangle : public Primitive
 {
 public:
